@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://astrorawak.github.io/borneo-endemic-ant/sitemap.xml
