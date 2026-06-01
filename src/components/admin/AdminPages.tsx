@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { useAdminStore } from '../../store/adminStore';
-import { slugify, generateId, formatUSD } from '../../lib/utils';
+import { slugify, formatUSD } from '../../lib/utils';
 import type { Product, Category, BlogPost, StoreSettings } from '../../types';
 
 // ===== TOAST =====
@@ -55,7 +55,7 @@ function ImageUploader({ value, onChange, onToast, label = 'Image' }: { value: s
         {value ? (
           <div style={{ position: 'relative' }}>
             <img src={value} alt="preview" style={{ width: '100%', height: '140px', objectFit: 'cover', display: 'block' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')} onMouseLeave={(e) => (e.currentTarget.style.opacity = '0')}><span style={{ color: '#fff', fontSize: '13px', fontWeight: 700 }}>🔄 Change Image</span></div>
+            <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.2s' }} onMouseEnter={(e) => ((e.currentTarget as HTMLDivElement).style.opacity = '1')} onMouseLeave={(e) => ((e.currentTarget as HTMLDivElement).style.opacity = '0')}><span style={{ color: '#fff', fontSize: '13px', fontWeight: 700 }}>🔄 Change Image</span></div>
           </div>
         ) : (
           <div style={{ padding: '32px', textAlign: 'center' }}>
@@ -105,6 +105,8 @@ function FormField({ label, children }: { label: string; children: React.ReactNo
   );
 }
 
+import React from 'react';
+
 // ===== DASHBOARD =====
 export function AdminDashboard() {
   const { products, orders, blogPosts, categories } = useAdminStore();
@@ -119,7 +121,7 @@ export function AdminDashboard() {
         {[['Total Products', products.length, '🐜'], ['Active', activeProducts, '✅'], ['Pending Orders', pendingOrders, '📦'], ['Categories', categories.length, '🏷️'], ['Blog Posts', blogPosts.filter((p) => p.isPublished).length, '📝']].map(([label, val, icon]) => (
           <div key={label as string} style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: '8px', padding: '20px', textAlign: 'center' }}>
             <div style={{ fontSize: '28px', marginBottom: '8px' }}>{icon}</div>
-            <div style={{ fontFamily: 'Cinzel, serif', fontSize: '24px', fontWeight: 700, color: 'var(--primary)', marginBottom: '4px' }}>{val}</div>
+            <div style={{ fontFamily: 'Cinzel, serif', fontSize: '24px', fontWeight: 700, color: 'var(--primary)', marginBottom: '4px' }}>{val as React.ReactNode}</div>
             <div style={{ fontFamily: 'Space Mono, monospace', fontSize: '10px', color: 'var(--muted)', letterSpacing: '1px' }}>{label as string}</div>
           </div>
         ))}
@@ -198,7 +200,7 @@ export function AdminProducts() {
           </thead>
           <tbody>
             {filtered.map((p) => (
-              <tr key={p.id} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,107,26,0.04)')} onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
+              <tr key={p.id} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }} onMouseEnter={(e) => ((e.currentTarget as HTMLTableRowElement).style.background = 'rgba(255,107,26,0.04)')} onMouseLeave={(e) => ((e.currentTarget as HTMLTableRowElement).style.background = 'transparent')}>
                 <td style={{ padding: '12px 16px' }}>
                   <div style={{ fontFamily: 'Cinzel, serif', fontSize: '13px', marginBottom: '2px' }}>{p.name}</div>
                   {p.scientificName && <div style={{ fontStyle: 'italic', fontSize: '11px', color: 'var(--muted)' }}>{p.scientificName}</div>}
@@ -449,8 +451,8 @@ export function AdminBlog() {
             <ImageUploader value={form.image} onChange={(url) => f('image', url)} onToast={show} label="Cover Image" />
             <FormField label="Content (Markdown)">
               <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '8px' }}>
-                {[['H2', '## '], ['H3', '### '], ['Bold', '**bold**'], ['List', '\n- Item 1\n- Item 2']].map(([label, prefix]) => (
-                  <button key={label} type="button" onClick={() => insertText(prefix)} style={{ padding: '4px 10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--muted)', borderRadius: '4px', cursor: 'pointer', fontFamily: 'Space Mono, monospace', fontSize: '10px' }}>{label}</button>
+                {[['H2', '## '], ['H3', '### '], ['Bold', '**bold**'], ['List', '\n- Item 1\n- Item 2']].map(([lbl, prefix]) => (
+                  <button key={lbl} type="button" onClick={() => insertText(prefix)} style={{ padding: '4px 10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--muted)', borderRadius: '4px', cursor: 'pointer', fontFamily: 'Space Mono, monospace', fontSize: '10px' }}>{lbl}</button>
                 ))}
               </div>
               <textarea ref={textRef} className="input-field" value={form.content} onChange={(e) => f('content', e.target.value)} rows={10} style={{ fontFamily: 'Space Mono, monospace', fontSize: '12px' }} />
@@ -606,6 +608,3 @@ export function AdminSettings() {
     </div>
   );
 }
-
-const generateId_ = generateId;
-void generateId_;

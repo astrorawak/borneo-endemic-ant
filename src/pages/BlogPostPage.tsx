@@ -1,4 +1,5 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { useAdminStore } from '../store/adminStore';
 
 function renderContent(content: string): React.ReactNode[] {
@@ -17,11 +18,15 @@ function renderContent(content: string): React.ReactNode[] {
   });
 }
 
+import React from 'react';
+
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
   const { blogPosts } = useAdminStore();
   const post = blogPosts.find((p) => p.slug === slug && p.isPublished);
-  const [copied, setCopied] = React.useState(false);
+  const [copied, setCopied] = useState(false);
+  const navigate = useNavigate();
+  void navigate;
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -46,23 +51,19 @@ export default function BlogPostPage() {
   return (
     <main style={{ minHeight: '100vh', padding: '60px 0' }}>
       <div className="page-container" style={{ maxWidth: '780px' }}>
-        {/* Breadcrumb */}
         <div style={{ marginBottom: '32px', fontFamily: 'Space Mono, monospace', fontSize: '11px', color: 'var(--muted)', display: 'flex', gap: '8px' }}>
           <Link to="/" style={{ color: 'var(--muted)', textDecoration: 'none' }}>Home</Link> /
           <Link to="/blog" style={{ color: 'var(--muted)', textDecoration: 'none' }}>Journal</Link> /
           <span style={{ color: 'var(--primary)' }}>{post.title}</span>
         </div>
 
-        {/* Share top */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '32px', flexWrap: 'wrap' }}>
           <button onClick={handleShare} className="btn-ghost" style={{ fontSize: '11px', padding: '8px 16px' }}>🔗 {copied ? 'Link Copied!' : 'Share'}</button>
           <a href={waUrl} target="_blank" rel="noreferrer" className="btn-ghost" style={{ fontSize: '11px', padding: '8px 16px', textDecoration: 'none' }}>💬 WhatsApp</a>
         </div>
 
-        {/* Cover */}
         {post.image && <img src={post.image} alt={post.title} style={{ width: '100%', height: '320px', objectFit: 'cover', borderRadius: '4px', marginBottom: '40px', border: '1px solid var(--border)' }} />}
 
-        {/* Meta */}
         {post.tags.length > 0 && (
           <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '16px' }}>
             {post.tags.map((t) => <span key={t} style={{ fontFamily: 'Space Mono, monospace', fontSize: '9px', color: 'var(--primary)', border: '1px solid var(--border)', padding: '3px 10px', borderRadius: '2px', letterSpacing: '1px', textTransform: 'uppercase' }}>{t}</span>)}
@@ -74,12 +75,10 @@ export default function BlogPostPage() {
 
         <hr className="divider" style={{ marginBottom: '40px' }} />
 
-        {/* Content */}
         <article>{renderContent(post.content)}</article>
 
         <hr className="divider" style={{ margin: '48px 0 32px' }} />
 
-        {/* Share bottom */}
         <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
           <button onClick={handleShare} className="btn-ghost">🔗 {copied ? 'Link Copied!' : 'Share Article'}</button>
           <a href={waUrl} target="_blank" rel="noreferrer" className="btn-ghost" style={{ textDecoration: 'none' }}>💬 Share on WhatsApp</a>
@@ -89,5 +88,3 @@ export default function BlogPostPage() {
     </main>
   );
 }
-
-import React from 'react';
